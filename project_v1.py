@@ -128,7 +128,7 @@ def portscan(queue, ip):
 
 initial_length = 0
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Videos to images')
+    parser = argparse.ArgumentParser(description='Gathering information before pentest')
     parser.add_argument('--url', type=str, help='Input URL address', required=True)
     parser.add_argument('--threads', type=int, help='Input number of threads')
     parser.add_argument('--payload', type=str, help="Input path to your file with user payloads")
