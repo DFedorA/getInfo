@@ -8,10 +8,14 @@ from fake_useragent import UserAgent
 
 ua = UserAgent()
 
-def request(url, method, parameters='', filter=False):
+
+def request(url, method, ntls, parameters='', filter=False, ):
     try:
         if url.find('http://') == -1 and url.find('https://') == -1:
-            url = "http://" + url
+            if ntls == 'http':
+                url = "http://" + url
+            else:
+                url = "https://" + url
         res = requests.request(method=method, url=url, params=parameters,
                                allow_redirects=False)
         if res.status_code == 403:
@@ -36,13 +40,14 @@ def request(url, method, parameters='', filter=False):
     except requests.exceptions.ConnectionError:
         return None, None
 
-def distribution_thread_and_launch(target_url, thread_count, payload, function):
+
+def distribution_thread_and_launch(target_url, thread_count, payload, function, ntls):
     queue = Queue()
     with open(payload, "r") as wordlist_file:
         for line in wordlist_file:
             queue.put(line.strip())
     for i in range(thread_count):
-        thread = Thread(target=function, args=(queue, target_url))
+        thread = Thread(target=function, args=(queue, target_url, ntls))
         thread.daemon = True
         thread.start()
     queue.join()

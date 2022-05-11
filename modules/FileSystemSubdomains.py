@@ -9,11 +9,11 @@ warnings.simplefilter("ignore", UserWarning)
 from bs4 import BeautifulSoup as bs
 
 
-def determining_subdomains(queue, target_url):
+def determining_subdomains(queue, target_url, ntls):
     while not queue.empty():
         word = queue.get_nowait()
         test_url = word + '.' + target_url
-        response, main_mode = request(test_url, 'GET')
+        response, main_mode = request(test_url, 'GET', ntls)
         if response:
             logging.info(f'[+] Discovered subdomain --> {test_url}\n')
         queue.task_done()
@@ -47,14 +47,14 @@ def parameter_search(text, test_url):
         pass
 
 
-def determining_file_system(queue, target_url):
+def determining_file_system(queue, target_url, ntls):
     while not queue.empty():
         word = queue.get_nowait()
         if word[0] == '/':
             test_url = target_url + word
         else:
             test_url = target_url + '/' + word
-        response, main_mode = request(test_url, 'GET')
+        response, main_mode = request(test_url, 'GET', ntls)
         try:
             if response.status_code == 508:
                 logging.info(f'[+] Resource Limit Is Reached\n'

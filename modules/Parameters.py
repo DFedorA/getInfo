@@ -54,7 +54,7 @@ def print_result(result, filter, anomaly):
                     '--------------------------------------\n')
 
 
-def test_url_with_parameters(target_url, thread_count, payload, filter, anomaly, method):
+def test_url_with_parameters(target_url, thread_count, payload, filter, anomaly, method, ntls):
     global initial_length, not_found_length
     str_parameters = target_url.split('?', 1)[1].strip()
     mass_parameters = str_parameters.split('&')
@@ -62,13 +62,13 @@ def test_url_with_parameters(target_url, thread_count, payload, filter, anomaly,
     if url.find("*") != -1:
         url = url.replace("*", "")
 
-    response, main_mode = request(target_url, method, '', filter)
+    response, main_mode = request(target_url, method,ntls, '', filter)
     content = response.content
     initial_length = len(content)
     print_current_result(response)
 
     not_found_url = 2 * target_url.split('?')[0]
-    response, main_mode = request(not_found_url, method, '', filter)
+    response, main_mode = request(not_found_url, method,ntls, '', filter)
     content = response.content
     not_found_length = len(content)
     print_not_found_result(response)
@@ -79,18 +79,18 @@ def test_url_with_parameters(target_url, thread_count, payload, filter, anomaly,
             queue.put(line.strip())
     for i in range(thread_count):
         thread = Thread(target=run_test_url_with_parameters,
-                        args=(queue, url, mass_parameters, filter, anomaly, method))
+                        args=(queue, url, mass_parameters, filter, anomaly, method, ntls))
         thread.daemon = True
         thread.start()
     queue.join()
 
-def run_test_url_with_parameters(queue, url, mass_parameters, filter, anomaly, method):
+def run_test_url_with_parameters(queue, url, mass_parameters, filter, anomaly, method, ntls):
     while not queue.empty():
         line = queue.get_nowait()
         for i in range(0, len(mass_parameters)):
             head, sep, tail = mass_parameters[i].partition('=')
             mass_parameters[i] = head + sep + line
         str_parameters = "&".join(str(x) for x in mass_parameters)
-        response, main_mode = request(url, method, str_parameters)
+        response, main_mode = request(url, method, ntls, str_parameters)
         print_result(response, filter, anomaly)
         queue.task_done()

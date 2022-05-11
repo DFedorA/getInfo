@@ -15,6 +15,7 @@ if __name__ == '__main__':
     parser.add_argument('--anomaly', type=int, help="Input path to enter a range of anomalies")
     parser.add_argument('--method', type=str, help='Input method (GET,POST), default:GET')
     parser.add_argument('--port', type=int, help="Flag for to get working ports (ex: site.com)")
+    parser.add_argument('-ntls', action='store_true', help='Flag for selection http or https, default:https')
     parser.add_argument('-js', action='store_true', help='Flag for finds javascript files')
     parser.add_argument('-php', action='store_true', help='Flag for finds php files')
     parser.add_argument('-index', action='store_true', help='Flag for finds index files')
@@ -34,6 +35,8 @@ if __name__ == '__main__':
     if args.url is None:
         print("{}Input URL address in format example.com")
         exit()
+    if args.ntls:
+        args.ntls = 'http'
     if args.threads is None:
         args.threads = 350
     elif args.threads is not None:
@@ -50,19 +53,19 @@ if __name__ == '__main__':
         url = url.strip('/')
 
     if args.aws:
-        check_aws(url)
+        check_aws(url,  args.ntls)
     elif args.cloudflare:
-        check_cloudflare(url)
+        check_cloudflare(url, args.ntls)
     elif args.django:
-        check_django(url)
+        check_django(url,  args.ntls)
     elif args.jm:
         if args.payload is None:
             args.payload = 'wordlists/urls-joomla'
-        check_joomla(url, args.threads, args.payload)
+        check_joomla(url, args.threads, args.payload, args.ntls)
     elif args.ws:
         if args.payload is None:
             args.payload = 'wordlists/urls-wordpress'
-        check_wordpress(url, args.threads, args.payload)
+        check_wordpress(url, args.threads, args.payload,  args.ntls)
     else:
         if args.port is not None:
             DNS_record = get_dns_info(url)
@@ -71,11 +74,11 @@ if __name__ == '__main__':
             if args.params:
                 args.payload = 'wordlists/query'
                 print("[+] Running enumerate query params\n")
-                test_url_with_parameters(url, args.threads, args.payload, args.filter, args.anomaly, args.method)
+                test_url_with_parameters(url, args.threads, args.payload, args.filter, args.anomaly, args.method,  args.ntls)
             elif args.subdomain:
                 args.payload = 'wordlists/subdomains'
                 print("[+] Running determining subdomains\n")
-                distribution_thread_and_launch(url, args.threads, args.payload, determining_subdomains)
+                distribution_thread_and_launch(url, args.threads, args.payload, determining_subdomains, args.ntls)
             else:
                 if args.payload is None:
                     if args.js:
@@ -87,6 +90,6 @@ if __name__ == '__main__':
                     else:
                         args.payload = 'wordlists/general-wordlist'
                 print("[+] Running determining file system\n")
-                distribution_thread_and_launch(url, args.threads, args.payload, determining_file_system)
+                distribution_thread_and_launch(url, args.threads, args.payload, determining_file_system, args.ntls)
 
     print('Lead time:', datetime.now() - start_time)
