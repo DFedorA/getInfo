@@ -12,8 +12,8 @@ def print_manager(max_urls):
     t = Timer(1, print_manager, [max_urls])
     t.start()
     print(
-        f'\r[+] Total internal links --> {len(internal_urls)} Total external links --> {len(external_urls)} Total '
-        f'URLs --> {len(external_urls) + len(internal_urls)} Total crawled URLs --> {total_urls_visited} \r')
+        f'[+] Total internal links --> {len(internal_urls)} Total external links --> {len(external_urls)} Total '
+        f'URLs --> {len(external_urls) + len(internal_urls)} Total crawled URLs --> {total_urls_visited}')
     if total_urls_visited >= max_urls:
         t.cancel()
         return
@@ -58,10 +58,10 @@ def run_crawl_url(url, max_urls):
     crawl(url, max_urls)
     domain_name = urlparse(url).netloc
 
-    with open(f"{domain_name}_internal_links", "w") as f:
+    with open(f'{domain_name}_internal_links', "w") as f:
         for internal_link in internal_urls:
             print(internal_link.strip(), file=f)
 
-    with open(f"{domain_name}_external_links", "w") as f:
+    with open(f'{domain_name}_external_links', "w") as f:
         for external_link in external_urls:
             print(external_link.strip(), file=f)

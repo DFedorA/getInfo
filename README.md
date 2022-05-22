@@ -61,6 +61,10 @@ python getInfo.py --url https://site.com/  -ws
 ```
 
 ### Typical creating a site map
+The result will be in the form of two files:
+1. site_internal_links 
+2. site_external_links
+
 To start creating a site map, use the command:
 ```
 python getInfo.py --url https://site.com --sitemap 5
