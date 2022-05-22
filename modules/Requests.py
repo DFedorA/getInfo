@@ -9,14 +9,15 @@ from fake_useragent import UserAgent
 ua = UserAgent()
 
 
-def request(url, method, ntls, parameters='', filter=False, ):
+def request(url, method, ntls, parameters='', filter=False, data=''):
     try:
         if url.find('http://') == -1 and url.find('https://') == -1:
             if ntls == 'http':
                 url = "http://" + url
             else:
                 url = "https://" + url
-        res = requests.request(method=method, url=url, params=parameters,
+
+        res = requests.request(method=method, url=url, params= parameters, data=data,
                                allow_redirects=False)
         if res.status_code == 403:
             try:

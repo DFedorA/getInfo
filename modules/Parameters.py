@@ -1,8 +1,10 @@
 import logging
+import json
 from modules.Requests import *
 
 initial_length = 0
 not_found_length = 0
+
 
 def print_current_result(result):
     len_content = len(result.content)
@@ -14,7 +16,6 @@ def print_current_result(result):
           f'[+] Response time --> {time}\n'
           f'[+] Response content length --> {len_content}\n'
           '--------------------------------------\n')
-
 
 def print_not_found_result(result):
     len_content = len(result.content)
@@ -55,20 +56,30 @@ def print_result(result, filter, anomaly):
 
 
 def test_url_with_parameters(target_url, thread_count, payload, filter, anomaly, method, ntls):
+    data = ''
     global initial_length, not_found_length
-    str_parameters = target_url.split('?', 1)[1].strip()
-    mass_parameters = str_parameters.split('&')
+    if len(target_url.split('?', 1)) > 1:
+        str_parameters = target_url.split('?', 1)[1].strip()
+        mass_parameters = str_parameters.split('&')
+    else:
+        mass_parameters = ''
     url = target_url.split('?', 1)[0].strip()
     if url.find("*") != -1:
         url = url.replace("*", "")
 
-    response, main_mode = request(target_url, method,ntls, '', filter)
+    if len(method):
+        data = json.loads(method.replace("\'", "\""))
+        method = 'POST'
+    else:
+        method = 'GET'
+
+    response, main_mode = request(target_url, method, ntls, '', filter, data)
     content = response.content
     initial_length = len(content)
     print_current_result(response)
 
     not_found_url = 2 * target_url.split('?')[0]
-    response, main_mode = request(not_found_url, method,ntls, '', filter)
+    response, main_mode = request(not_found_url, method, ntls, '', filter, data)
     content = response.content
     not_found_length = len(content)
     print_not_found_result(response)
@@ -79,18 +90,19 @@ def test_url_with_parameters(target_url, thread_count, payload, filter, anomaly,
             queue.put(line.strip())
     for i in range(thread_count):
         thread = Thread(target=run_test_url_with_parameters,
-                        args=(queue, url, mass_parameters, filter, anomaly, method, ntls))
+                        args=(queue, url, mass_parameters, filter, anomaly, method, ntls, data))
         thread.daemon = True
         thread.start()
     queue.join()
 
-def run_test_url_with_parameters(queue, url, mass_parameters, filter, anomaly, method, ntls):
+
+def run_test_url_with_parameters(queue, url, mass_parameters, filter, anomaly, method, ntls, data):
     while not queue.empty():
         line = queue.get_nowait()
         for i in range(0, len(mass_parameters)):
             head, sep, tail = mass_parameters[i].partition('=')
             mass_parameters[i] = head + sep + line
         str_parameters = "&".join(str(x) for x in mass_parameters)
-        response, main_mode = request(url, method, ntls, str_parameters)
+        response, main_mode = request(url, method, ntls, str_parameters, False, data)
         print_result(response, filter, anomaly)
         queue.task_done()
