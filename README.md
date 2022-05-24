@@ -1,5 +1,15 @@
 # getInfo
 The utility is designed to automate the initial stages of auditing a web application during manual testing.
+
+## Utility functionality
+1. Determining the file system and subdomains of the web application.
+2. Enumeration of URL query parameters.
+3. Collecting information about the server using Nmap (ports and services, OS).
+4. Collection of information about web technologies:
+   1. CMS (plugins, version, CVE) - WordPress, Joomla.
+   2. WAF - Cloudflare, Aws.
+   3. Backend - Django.
+   
 ## List of available flags
 ```
   --url URL          Input URL address

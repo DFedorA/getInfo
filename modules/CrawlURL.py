@@ -6,9 +6,11 @@ from threading import Timer
 internal_urls = set()
 external_urls = set()
 total_urls_visited = 0
+t = None
 
 
 def print_manager(max_urls):
+    global t
     t = Timer(1, print_manager, [max_urls])
     t.start()
     print(
@@ -60,8 +62,9 @@ def run_crawl_url(url, max_urls):
 
     with open(f'{domain_name}_internal_links', "w") as f:
         for internal_link in internal_urls:
-            print(internal_link.strip(), file=f)
+            f.write(internal_link + '\n')
 
     with open(f'{domain_name}_external_links', "w") as f:
         for external_link in external_urls:
-            print(external_link.strip(), file=f)
+            f.write(external_link + '\n')
+    t.cancel()

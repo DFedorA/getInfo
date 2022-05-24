@@ -34,7 +34,7 @@ def get_wordpress_cve(version, ntls):
     else:
         content = str(response.text)
     json_content = json.loads(content)
-    if len(json_content['data']['vulnerability']) > 0:
+    if json_content['data']['vulnerability'] is not None and len(json_content['data']['vulnerability']) > 0:
         print("[+] Found vulnerabilities\n")
         for item in json_content['data']['vulnerability']:
             print(f'[+] Name --> {item["source"][0]["name"]}\n'
