@@ -4,11 +4,17 @@ The utility is designed to automate the initial stages of auditing a web applica
 ## Utility functionality
 1. Determining the file system and subdomains of the web application.
 2. Enumeration of URL query parameters.
-3. Collecting information about the server using Nmap (ports and services, OS).
+3. Collecting information about the server using Nmap (ports and services, characteristics OS).
 4. Collection of information about web technologies:
    1. CMS (plugins, version, CVE) - WordPress, Joomla.
    2. WAF - Cloudflare, Aws.
    3. Backend - Django.
+5. Create sitemaps for web applications. There is support for displaying the graph of the relationship of internal links as an image.
+ The output is three files:
+   1. internal links.
+   2. external links.
+   3. map of the relationship of internal links in JSON format.
+
    
 ## List of available flags
 ```
@@ -31,6 +37,7 @@ The utility is designed to automate the initial stages of auditing a web applica
   -django            Flag for detect django (framework)
   -cloudflare        Flag for detect cloudflare (waf)
   -aws               Flag for detect aws (waf)
+  -graph             Flag for creation and output graph internal links
 ```
 
 ## Example usage
@@ -71,9 +78,10 @@ python getInfo.py --url https://site.com/  -ws
 ```
 
 ### Typical creating a site map
-The result will be in the form of two files:
-1. site_internal_links 
-2. site_external_links
+The result will be in the form of three files:
+1. site_internal_links.
+2. site_external_links.
+3. site_dependent_internal_links.
 
 To start creating a site map, use the command:
 ```

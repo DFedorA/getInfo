@@ -30,6 +30,7 @@ if __name__ == '__main__':
     parser.add_argument('-django', action='store_true', help='Flag for detect django (framework)')
     parser.add_argument('-cloudflare', action='store_true', help='Flag for detect cloudflare (waf)')
     parser.add_argument('-aws', action='store_true', help='Flag for detect aws (waf)')
+    parser.add_argument('-graph', action='store_true', help='Flag for creation and output graph internal links')
 
     start_time = datetime.now()
     tprint('getInfo')
@@ -75,7 +76,7 @@ if __name__ == '__main__':
             determining_portscan(url)
         else:
             if args.sitemap is not None:
-                run_crawl_url(url, args.sitemap)
+                run_crawl_url(url, args.sitemap, args.graph)
             else:
                 if args.params:
                     args.payload = 'wordlists/query'
